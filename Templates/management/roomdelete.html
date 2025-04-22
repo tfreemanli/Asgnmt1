@@ -1,0 +1,18 @@
+{% extends 'BASE.html' %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+	<div class="container">
+        <div class="row">
+            <div class="col-12">
+                <form method="post" action="{% url 'management_room_delete' room.id %}">
+                    {% csrf_token %}
+                    <p>Are you sure you want to delete this room?</p>
+                    <p><strong>{{ room.title }}</strong></p>
+                    <p><strong>{{ room.desc }}</strong></p>
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <a href="{% url 'management_room_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'BASE.html' %}
+{% block title %}Reservation Management{% endblock %}
+
+{% block content %}
+	<div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <table class="table table-striped" style="width:80%; margin: auto;">
+                    <thead>
+                        <tr>
+                            <th scope="col">Title</th>
+                            <th scope="col">Client</th>
+                            <th scope="col">Created By</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rsv in object_list %}
+                            <tr>
+                                <td>{{ rsv.title }}</td>
+                                <td>{{ rsv.client }}</td>
+                                <td>{{ rsv.creator }}</td>
+                                <td>{{ rsv.desc }}</td>
+                                <td>
+                                    <a href="{% url 'management_rsv_detail' rsv.id %}" class="btn btn-primary">Update</a>
+                                    <a href="{% url 'management_rsv_delete' rsv.id %}" class="btn btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                            <tr>
+                                <td colspan="5" style="text-align: left;">
+                                    <a href="{% url 'management_rsv_create' %}" class="btn btn-primary">Add</a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

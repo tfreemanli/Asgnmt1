@@ -1,0 +1,42 @@
+{% extends 'BASE.html' %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex justify-content-center align-items-center top-50">
+            <div class="border border-1 border-secondary p-4 rounded">
+                <div><p>Room Create</p></div>
+
+            <form method="post" action="{% url 'management_room_create' %}" class="form-horizontal">
+
+                        {% csrf_token %}
+
+                        {% for field in form %}
+                            <div class="form-group row">
+                                <label for="{{ field.id_for_label }}" class="col-12 col-form-label">
+                                    {{ field.label }}
+                                </label>
+                                <div class="col-12">
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <small class="form-text text-muted">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% if field.errors %}
+                                        <div class="alert alert-danger">{{ field.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                        <div class="form-group row">
+                            &nbsp;
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-10 offset-sm-2">
+                                <button type="submit" class="btn btn-primary"> OK </button>
+                            </div>
+                        </div>
+                    </form>
+            </div>
+        </div>
+{% endblock %}
