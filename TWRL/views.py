@@ -93,24 +93,38 @@ class ManagementRSVCreate(CreateView):
     form_class = CreateRSVForm
 
     def form_valid(self, form):
-        form.instance.creator = self.request.user
-        self.object = form.save(commit=False)
-        self.object.user = self.request.user
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+        try:
+            form.instance.creator = self.request.user
+            self.object = form.save(commit=False)
+            self.object.user = self.request.user
+            self.object.full_clean()
+            self.object.save()
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            #messages.error(self.request, e.message)
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
 class ManagementRSVUpdate(UpdateView):
     model = Reservation
     template_name = 'management/rsvdetail.html'
     form_class = UpdateRSVForm
     # success_url = request.path
+    success_url = reverse_lazy('management_rsv_list')
 
     def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.user = self.request.user
-        messages.success(self.request, "Updated successfully!")
-        self.object.save()
-        return HttpResponseRedirect(self.request.path)
+        try:
+            self.object = form.save(commit=False)
+            self.object.user = self.request.user
+            # messages.success(self.request, "Updated successfully!")
+            self.object.full_clean()
+            self.object.save()
+            # return HttpResponseRedirect(self.request.path)
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            # messages.error(self.request, e.message)
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
 class ManagementRSVDelete(DeleteView):
     model = Reservation
