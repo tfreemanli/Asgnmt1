@@ -12,27 +12,32 @@ from TWRL.models import *
 def index(request):
     return render(request, 'index.html')
 
-def register(request):
-    # if request.method == 'POST':
-    #     username=request.POST['username']
-    #     email = request.POST['email']
-    #     fname = request.POST['firstname']
-    #     lname = request.POST['lastname']
-    #     password = request.POST['password']
-    #     password2 = request.POST['password2']
-    #     if password == password2:
-    #         user = User.objects.create_user(username=username, email=email, first_name=fname, last_name=lname)
-    #         user.set_password(password)
-    #         user.save()
-    #         return redirect('login')
+class Register(CreateView):
+    model = User
+    template_name = 'registration/register.html'
+    form_class = RegisterForm
+    success_url = reverse_lazy('login')
 
-    return render(request, 'register.html')
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edited_user'] = self.object
+        context['user'] = self.request.user
+        return context
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        new_passwd = form.cleaned_data['password1']
+        user.set_password(new_passwd)
+        user.save()
+        messages.add_message(self.request, messages.SUCCESS, "User registered successfully! Please login.")
+        return super().form_valid(form)
 
 
 class RoomList(ListView):
     model = Room
     template_name = 'roomlist.html'
 
+################ Room management
 class ManagementRoomList(ListView):
     model = Room
     ordering = 'room_number'
@@ -47,7 +52,7 @@ class ManagementRoomCreate(CreateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.user = self.request.user
+        # self.object.user = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
@@ -59,21 +64,21 @@ class ManagementRoomUpdate(UpdateView):
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
-        self.object.user = self.request.user
+        # self.object.user = self.request.user
         self.object.save()
         return HttpResponseRedirect(self.get_success_url())
 
-class ManagementRoomBook(CreateView):
-    model = Reservation
-    template_name = 'management/rsvcreate.html'
-    fields = ['client', 'creator', 'title', 'desc']
-    success_url = reverse_lazy('management_rsvDetail_create')
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        self.object.user = self.request.user
-        self.object.save()
-        return HttpResponseRedirect(self.get_success_url())
+# class ManagementRoomBook(CreateView):
+#     model = Reservation
+#     template_name = 'management/rsvcreate.html'
+#     fields = ['client', 'creator', 'title', 'desc']
+#     success_url = reverse_lazy('management_rsvDetail_create')
+#
+#     def form_valid(self, form):
+#         self.object = form.save(commit=False)
+#         self.object.user = self.request.user
+#         self.object.save()
+#         return HttpResponseRedirect(self.get_success_url())
 
 
 class ManagementRoomDelete(DeleteView):
@@ -81,6 +86,7 @@ class ManagementRoomDelete(DeleteView):
     template_name = 'management/roomdelete.html'
     success_url = reverse_lazy('management_room_list')
 
+#################### RSV management
 class ManagementRSVList(ListView):
     model = Reservation
     template_name = 'management/rsvlist.html'
@@ -88,7 +94,6 @@ class ManagementRSVList(ListView):
 class ManagementRSVCreate(CreateView):
     model = Reservation
     template_name = 'management/rsvcreate.html'
-    #fields = ['title', 'client', 'desc']
     success_url = reverse_lazy('management_rsv_list')
     form_class = CreateRSVForm
 
@@ -96,7 +101,7 @@ class ManagementRSVCreate(CreateView):
         try:
             form.instance.creator = self.request.user
             self.object = form.save(commit=False)
-            self.object.user = self.request.user
+            # self.object.user = self.request.user
             self.object.full_clean()
             self.object.save()
             return HttpResponseRedirect(self.get_success_url())
@@ -115,7 +120,7 @@ class ManagementRSVUpdate(UpdateView):
     def form_valid(self, form):
         try:
             self.object = form.save(commit=False)
-            self.object.user = self.request.user
+            # self.object.user = self.request.user
             # messages.success(self.request, "Updated successfully!")
             self.object.full_clean()
             self.object.save()
@@ -130,3 +135,102 @@ class ManagementRSVDelete(DeleteView):
     model = Reservation
     template_name = 'management/rsvdelete.html'
     success_url = reverse_lazy('management_rsv_list')
+
+############# User management
+
+class ManagementUSRList(ListView):
+    model = User
+    template_name = 'management/usr_list.html'
+
+class ManagementUSRCreate(CreateView):
+    model = User
+    template_name = 'management/usr_create.html'
+    success_url = reverse_lazy('management_usr_list')
+    form_class = CreateUSRForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edited_user'] = self.object
+        context['user'] = self.request.user
+        return context
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def form_valid(self, form):
+        user = form.save(commit=False)
+        new_passwd = form.cleaned_data['password1']
+        user.set_password(new_passwd)
+        user.save()
+        return super().form_valid(form)
+
+class ManagementUSRUpdate(UpdateView):
+    model = User
+    template_name = 'management/usr_detail.html'
+    form_class = UpdateUSRForm
+    success_url = reverse_lazy('management_usr_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edited_user'] = self.object
+        context['user'] = self.request.user
+        return context
+
+    # def form_valid(self, form):
+    #     self.object = form.save(commit=False)
+    #     #self.object.user = self.request.user
+    #     self.object.save()
+    #     return HttpResponseRedirect(self.get_success_url())
+
+
+class ManagementUsrPassword(UpdateView):
+    model = User
+    template_name = 'management/usr_password.html'
+    form_class = UpdateUsrPwdForm
+    success_url = reverse_lazy('management_usr_detail')
+
+    def get_success_url(self):
+        return reverse_lazy('management_usr_detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edited_user'] = self.object
+        context['user'] = self.request.user
+        return context
+
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    # def get_form_kwargs(self):
+    #     kwargs = super().get_form_kwargs()
+    #     kwargs['request'] = self.request
+    #     return kwargs
+
+    def form_valid(self, form):
+        user = self.get_object()
+        new_passwd = form.cleaned_data['password1']
+        user.set_password(new_passwd)
+        user.save()
+        messages.success(self.request, f"{user.username}'s Password reset successfully!")
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class ManagementUSRDelete(DeleteView):
+    model = User
+    template_name = 'management/usr_delete.html'
+    success_url = reverse_lazy('management_usr_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edited_user'] = self.object
+        context['user'] = self.request.user
+        return context
+
+#################### Booking
+class MyBookingList(ListView):
+
+class MyBookingCreate(CreateView):
+
+class MyBookingUpdate(UpdateView):
+
+class MyBookingDelete(DeleteView):

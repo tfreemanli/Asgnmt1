@@ -19,6 +19,11 @@ class Room(BaseModel):
     def __str__(self):
         return self.title
 
+# class MyUser(User):
+#     usr = models.OneToOneField(User, on_delete=models.CASCADE)
+#     address = models.CharField(max_length=255, null=True, blank=True)
+#     desc = models.CharField(max_length=255, null=True, blank=True)
+
 class Timeslot(BaseModel):
     orderby = models.IntegerField()
     title = models.CharField(max_length=255)

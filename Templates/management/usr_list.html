@@ -1,0 +1,47 @@
+{% extends 'BASE.html' %}
+
+{% block title %}User Management{% endblock %}
+
+{% block lnk %}<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">{% endblock %}
+
+{% block content %}
+	<div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <table class="table table-striped mt-4" >
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Firstname</th>
+                            <th scope="col">Lastname</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usr in object_list %}
+                            {% if not usr.is_superuser %}
+                            <tr>
+                                <td class="col-sm-1">{{ usr.username }}</td>
+                                <td class="col-sm-1">{{ usr.first_name }}</td>
+                                <td class="col-sm-1">{{ usr.last_name }}</td>
+                                <td class="col-sm-1">{{ usr.email }}</td>
+                                <td class="col-sm-2">
+                                    <a href="{% url 'management_usr_detail' usr.id %}" class="primary"><i class="bi bi-pencil me-2"></i></a>
+                                    <a href="{% url 'management_usr_delete' usr.id %}" class="danger"><i class="bi bi-trash me-2"></i></a>
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                            <tr>
+                                <td colspan="5" style="text-align: left;">
+                                    <a href="{% url 'management_usr_create' %}" class="btn btn-primary"> Add </a>
+                                </td>
+                            </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

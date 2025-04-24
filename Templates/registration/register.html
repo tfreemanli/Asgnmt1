@@ -1,0 +1,35 @@
+{% extends 'BASE.html' %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center mt-4">
+        <div class="col-6 border border-1 border-secondary p-4 rounded">
+            <div><h1>User Registration</h1></div>
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ field.id_for_label }}" class="col-form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="col-md-12 mb-3">
+                    <button type="submit" class="btn btn-primary"> OK</button>
+                    <a class="btn btn-secondary" href="{% url 'management_usr_list' %}"> Cancel </a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,8 +1,38 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
-from TWRL.models import Room, Reservation, RSVDetail
+from TWRL.models import Room, Reservation
 
+class RegisterForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class':'form-control'}),
+            'first_name': forms.TextInput(attrs={'class':'form-control'}),
+            'last_name': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+        }
+
+    password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+
+    password2 = forms.CharField(
+        label='Confirmed Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    def clean(self):
+        cleaned_data = super().clean()
+        passwd1 = cleaned_data.get("password1")
+        passwd2 = cleaned_data.get("password2")
+
+        if passwd1 and passwd2 and passwd1!= passwd2:
+            raise ValidationError("Passwords doesn't match.")
+
+        return cleaned_data
 
 class CreateRoomForm(forms.ModelForm):
     class Meta:
@@ -51,3 +81,70 @@ class UpdateRSVForm(forms.ModelForm):
 #             'date': forms.DateField(required=True),
 #             'timeslot': forms.Select(attrs={'class': 'form-select'}),
 #         }
+
+class CreateUSRForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email']
+        widgets = {
+            'username': forms.TextInput(attrs={'class':'form-control'}),
+            'first_name': forms.TextInput(attrs={'class':'form-control'}),
+            'last_name': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+        }
+
+    password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+
+    password2 = forms.CharField(
+        label='Confirmed Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    def clean(self):
+        cleaned_data = super().clean()
+        passwd1 = cleaned_data.get("password1")
+        passwd2 = cleaned_data.get("password2")
+
+        if passwd1 and passwd2 and passwd1!= passwd2:
+            raise ValidationError("Passwords doesn't match.")
+
+        return cleaned_data
+
+class UpdateUSRForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class':'form-control'}),
+            'last_name': forms.TextInput(attrs={'class':'form-control'}),
+            'email': forms.EmailInput(attrs={'class':'form-control'}),
+        }
+
+class UpdateUsrPwdForm(forms.ModelForm):
+
+    password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+
+    password2 = forms.CharField(
+        label='Confirmed Password',
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+
+    class Meta:
+        model = User
+        fields = []
+
+    def clean(self):
+        cleaned_data = super().clean()
+        passwd1 = cleaned_data.get("password1")
+        passwd2 = cleaned_data.get("password2")
+
+        if passwd1 and passwd2 and passwd1!= passwd2:
+            raise ValidationError("Passwords doesn't match.")
+
+        return cleaned_data

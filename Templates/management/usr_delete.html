@@ -1,0 +1,19 @@
+{% extends 'BASE.html' %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-center align-items-center mt-4">
+            <div class="col-6 border border-1 p-4 rounded mt-4">
+                <form method="post" action="{% url 'management_usr_delete' edited_user.id %}">
+                    {% csrf_token %}
+                    <p>Are you sure you want to delete this User?</p>
+                    <p><strong>{{ edited_user.username }}</strong></p>
+                    <p><strong>{{ edited_user.first_name }}</strong></p>
+                    <p><strong>{{ edited_user.last_name }}</strong></p>
+                    <p><strong>{{ edited_user.email }}</strong></p>
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <a href="{% url 'management_usr_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+    </div>
+{% endblock %}

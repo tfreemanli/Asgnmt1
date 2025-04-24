@@ -1,0 +1,46 @@
+{% extends 'BASE.html' %}
+{% block title %}
+    User Management
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center mt-4">
+        <div class="col-md-6 border border-1 border-secondary p-4 rounded">
+            <div><h1>User Information</h1></div>
+            <form method="post" action="{% url 'management_usr_detail' edited_user.id %}" class="form-horizontal">
+                {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="col-md-12 mb-3 ">
+                        <label for="{{ field.id_for_label }}" class="col-form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="col-md-12 mb-3">
+                    <button type="submit" class="btn btn-primary"> OK</button>
+                    <a class="btn btn-secondary" href='{% url 'management_usr_list' %}'> Cancel </a>
+                    <a href="{% url 'management_usr_password' edited_user.id %}" class="btn btn-primary"> Reset Password </a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -19,17 +19,20 @@ from TWRL.views import *
 
 urlpatterns = [
     path('', index, name="index"),
-    path("register/", register, name='register'),
+    path("register/", Register.as_view(), name='register'),
     path("roomlist/", RoomList.as_view(), name='room_list'),
+    path("mybookinglist/", MyBookingList.as_view(), name='my_booking_list'),
     path("management/roomlist/", ManagementRoomList.as_view(), name='management_room_list'),
     path("management/roomcreate/", ManagementRoomCreate.as_view(), name='management_room_create'),
     path("management/roomdetail/<int:pk>", ManagementRoomUpdate.as_view(), name='management_room_detail'),
-
-    #Don't Use this Booking entry for now
-    #path("management/roomBook/<int:pk>", ManagementRoomBook.as_view(), name='management_room_book'),
     path("management/roomdelete/<int:pk>", ManagementRoomDelete.as_view(), name='management_room_delete'),
     path("management/rsvlist/", ManagementRSVList.as_view(), name='management_rsv_list'),
     path("management/rsvcreate/", ManagementRSVCreate.as_view(), name='management_rsv_create'),
     path("management/rsvdetail/<int:pk>", ManagementRSVUpdate.as_view(), name='management_rsv_detail'),
     path("management/rsvdelete/<int:pk>", ManagementRSVDelete.as_view(), name='management_rsv_delete'),
+    path("management/usrlist/", ManagementUSRList.as_view(), name='management_usr_list'),
+    path("management/usrcreate/", ManagementUSRCreate.as_view(), name='management_usr_create'),
+    path("management/usrdetail/<int:pk>", ManagementUSRUpdate.as_view(), name='management_usr_detail'),
+    path("management/usrdelete/<int:pk>", ManagementUSRDelete.as_view(), name='management_usr_delete'),
+    path("management/usrpassword/<int:pk>", ManagementUsrPassword.as_view(), name='management_usr_password'),
 ]
