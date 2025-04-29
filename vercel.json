@@ -2,7 +2,7 @@
   "framework": null,
   "builds": [
     {
-      "src": "TWRL/wsgi.py",
+      "src": "Task2/wsgi.py",
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "15mb",
@@ -13,7 +13,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "TWRL/wsgi.py",
+      "dest": "Task2/wsgi.py",
       "headers": {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET, POST, OPTIONS, DELETE, PUT"
@@ -21,7 +21,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "TWRL/wsgi.py"
+      "dest": "Task2/wsgi.py"
     }
   ]
 }
