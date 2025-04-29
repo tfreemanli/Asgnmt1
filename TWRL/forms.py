@@ -47,12 +47,11 @@ class CreateRoomForm(forms.ModelForm):
 class CreateRSVForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        fields = ['title', 'client','creator', 'room', 'check_in_datetime', 'check_out_datetime', 'desc']
+        fields = ['title', 'client', 'room', 'check_in_datetime', 'check_out_datetime', 'desc']
         widgets = {
             'title': forms.TextInput(attrs={'class':'form-control'}),
             'desc': forms.TextInput(attrs={'class':'form-control'}),
             'client': forms.Select(attrs={'class': 'form-select'}),
-            'creator': forms.HiddenInput(),
             'room': forms.Select(attrs={'class': 'form-select'}),
             'check_in_datetime': forms.DateTimeInput(attrs={'class': 'form-control ', 'type': 'datetime-local'}),
             'check_out_datetime': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
@@ -148,3 +147,45 @@ class UpdateUsrPwdForm(forms.ModelForm):
             raise ValidationError("Passwords doesn't match.")
 
         return cleaned_data
+
+class MyBookingCreateForm(forms.ModelForm):
+    class Meta:
+        model = Reservation
+        fields = ['title', 'room', 'check_in_datetime', 'check_out_datetime', 'desc']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'desc': forms.TextInput(attrs={'class': 'form-control'}),
+            'room': forms.Select(attrs={'class': 'form-select'}),
+            'check_in_datetime': forms.DateTimeInput(attrs={'class': 'form-control ', 'type': 'datetime-local'}),
+            'check_out_datetime': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+        }
+
+class MyBookingCreateStep2Form(forms.ModelForm):
+
+    class Meta:
+        model = Reservation
+        fields = ['title', 'desc', 'room', 'check_in_datetime', 'check_out_datetime']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'desc': forms.TextInput(attrs={'class': 'form-control'}),
+            'room': forms.Select(attrs={'class':'form-select', 'readonly':'readonly', 'onfocus': "this.defaultIndex=this.selectedIndex;", 'onchange': "this.selectedIndex=this.defaultIndex;"}),
+            'check_in_datetime': forms.DateTimeInput(attrs={'class': 'form-control ', 'type': 'datetime-local', 'readonly': 'readonly' }),
+            'check_out_datetime': forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local', 'readonly': 'readonly' }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        # self.request = kwargs.pop('request', None)
+        room_id = kwargs.pop('room_id', None)
+        check_in = kwargs.pop('check_in', None)
+        check_out = kwargs.pop('check_out', None)
+
+        super().__init__(*args, **kwargs)
+
+        if room_id:
+            self.fields['room'].initial = room_id
+
+        if check_in:
+            self.fields['check_in_datetime'].initial = check_in
+
+        if check_out:
+            self.fields['check_out_datetime'].initial = check_out

@@ -1,0 +1,42 @@
+{% extends 'BASE.html' %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+    <div class="d-flex justify-content-center align-items-center mt-4">
+        <div class="col-6 border border-1 border-secondary p-4 rounded">
+            <div><h1>Reservation Create</h1></div>
+            <form method="post" action="{% url 'my_booking_create' %}" class="form-horizontal">
+                {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {% for error in form.non_field_errors %}
+                            {{ error }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="col-md-12 mb-3">
+                        <label for="{{ field.id_for_label }}" class="col-form-label">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="alert alert-danger">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <div class="col-md-12 mb-3">
+                    <button type="submit" class="btn btn-primary"> OK</button>
+                    <button type="button" class="btn btn-secondary"
+                            onclick="window.location='{% url 'my_booking_list' %}'; return false;"> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

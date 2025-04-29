@@ -2,6 +2,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib import messages
+from django.utils.dateparse import parse_datetime
+from django.db.models import Q
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from TWRL.forms import *
@@ -35,7 +37,7 @@ class Register(CreateView):
 
 class RoomList(ListView):
     model = Room
-    template_name = 'roomlist.html'
+    template_name = 'rsv_step1.html'
 
 ################ Room management
 class ManagementRoomList(ListView):
@@ -226,11 +228,118 @@ class ManagementUSRDelete(DeleteView):
         context['user'] = self.request.user
         return context
 
-#################### Booking
+#################### My Booking
 class MyBookingList(ListView):
+    model = Reservation
+    template_name = 'my_booking_list.html'
+
+    def get_queryset(self):
+        return Reservation.objects.filter(client=self.request.user).order_by('check_in_datetime')
 
 class MyBookingCreate(CreateView):
+    model = Reservation
+    template_name = 'my_booking_create.html'
+    success_url = reverse_lazy('my_booking_list')
+    form_class = MyBookingCreateForm
+
+    def form_valid(self, form):
+        try:
+            form.instance.creator = self.request.user
+            form.instance.client = self.request.user
+            self.object = form.save(commit=False)
+            self.object.full_clean()
+            self.object.save()
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            #messages.error(self.request, e.message)
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
 class MyBookingUpdate(UpdateView):
+    model = Reservation
+    template_name = 'my_booking_detail.html'
+    success_url = reverse_lazy('my_booking_list')
+    form_class = MyBookingCreateForm
+
+    def form_valid(self, form):
+        try:
+            self.object = form.save(commit=False)
+            self.object.full_clean()
+            self.object.save()
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            form.add_error(None, e)
+            return self.form_invalid(form)
 
 class MyBookingDelete(DeleteView):
+    model = Reservation
+    template_name = 'my_booking_delete.html'
+    success_url = reverse_lazy('my_booking_list')
+
+
+################### Book a room
+
+class BookStep1(ListView):
+    model = Room
+    template_name = 'rsv_step1.html'
+    # context_object_name = 'rooms'
+    ordering = 'room_number'
+
+
+    def get_queryset(self):
+        queryset = Room.objects.all().order_by('room_number')
+        startDT = self.request.GET.get('startDT')
+        endDT = self.request.GET.get('endDT')
+
+        if startDT and endDT:
+            try:
+                startDT = parse_datetime(startDT)
+                endDT = parse_datetime(endDT)
+
+                if startDT and endDT:
+                    reserved_rooms = Reservation.objects.filter(
+                        Q(check_in_datetime__lt=endDT) & Q(check_out_datetime__gt=startDT)
+                    ).values_list('room_id', flat=True)
+
+                    queryset = queryset.exclude(id__in=reserved_rooms)
+            except ValueError:
+                pass
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['startDT'] = self.request.GET.get('startDT', '')
+        context['endDT'] = self.request.GET.get('endDT', '')
+        return context
+class BookStep2(CreateView):
+    model = Reservation
+    template_name = 'rsv_step2.html'
+    success_url = reverse_lazy('my_booking_list')
+    form_class = MyBookingCreateStep2Form
+
+    def get_form_kwargs(self):
+        kwargs = super(BookStep2, self).get_form_kwargs()
+        kwargs.update({
+            'room_id': self.kwargs['room_id'],
+            'check_in': self.kwargs['check_in'],
+            'check_out': self.kwargs['check_out']
+        })
+        print(kwargs)
+        return kwargs
+
+    def form_valid(self, form):
+        try:
+            form.instance.creator = self.request.user
+            form.instance.client = self.request.user
+            form.instance.room = self.request.room_id
+            form.instance.check_in_datetime = self.request.check_in
+            form.instance.check_out_datetime = self.request.check_out
+            self.object = form.save(commit=False)
+            self.object.full_clean()
+            self.object.save()
+            return HttpResponseRedirect(self.get_success_url())
+        except ValidationError as e:
+            #messages.error(self.request, e.message)
+            form.add_error(None, e)
+            return self.form_invalid(form)

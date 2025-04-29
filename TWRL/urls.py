@@ -20,8 +20,12 @@ from TWRL.views import *
 urlpatterns = [
     path('', index, name="index"),
     path("register/", Register.as_view(), name='register'),
-    path("roomlist/", RoomList.as_view(), name='room_list'),
+    path("booking/step1/", BookStep1.as_view(), name='booking_step1'),
+    path("booking/step2/<int:room_id>/<str:check_in>/<str:check_out>/", BookStep2.as_view(), name='booking_step2'),
     path("mybookinglist/", MyBookingList.as_view(), name='my_booking_list'),
+    path("mybookingcreate/", MyBookingCreate.as_view(), name='my_booking_create'),
+    path("mybookingupdate/<int:pk>", MyBookingUpdate.as_view(), name='my_booking_detail'),
+    path("mybookingdelete/<int:pk>", MyBookingDelete.as_view(), name='my_booking_delete'),
     path("management/roomlist/", ManagementRoomList.as_view(), name='management_room_list'),
     path("management/roomcreate/", ManagementRoomCreate.as_view(), name='management_room_create'),
     path("management/roomdetail/<int:pk>", ManagementRoomUpdate.as_view(), name='management_room_detail'),

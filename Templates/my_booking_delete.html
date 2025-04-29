@@ -1,0 +1,20 @@
+{% extends 'BASE.html' %}
+{% block title %}Index{% endblock %}
+
+{% block content %}
+	<div class="d-flex justify-content-center align-items-center mt-4">
+            <div class="col-6 border border-1 p-4 rounded mt-4">
+                <form method="post" action="{% url 'my_booking_delete' reservation.id %}">
+                    {% csrf_token %}
+                    <p>Are you sure you want to delete this reservation?</p>
+                    <p>Title: <strong>{{ reservation.title }}</strong></p>
+                    <p>Room: {{ reservation.room }}</p>
+                    <p>CheckIn : {{ reservation.check_in_datetime }}</p>
+                    <p>CheckOut: {{ reservation.check_out_datetime }}</p>
+                    <p>Description: {{ reservation.desc }}</p>
+                    <input type="submit" value="Delete" class="btn btn-danger">
+                    <a href="{% url 'my_booking_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+    </div>
+{% endblock %}
