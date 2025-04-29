@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-4v6@@9x-ofk*9i_&rs2bh96nkcbsh#(z21h(%@@v53vra1@&e_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"] # Allow all hosts for development purposes
 
 
 # Application definition
@@ -68,16 +68,26 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'Task2.wsgi.application'
-
+# WSGI_APPLICATION = 'Task2.wsgi.application'
+WSGI_APPLICATION = 'Task2.wsgi.app'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
+
+    # Using Vercel PostgreSQL online Database
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_te6yidRWP1oO',
+        'HOST': 'ep-restless-term-a4ne8w1u-pooler.us-east-1.aws.neon.tech',
+        'PORT': '5432',
     }
 }
 
