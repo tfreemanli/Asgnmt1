@@ -142,3 +142,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+POSTMARK_API_TOKEN = '231e3add-63f6-4b4b-bd98-148fa0bbdb56'

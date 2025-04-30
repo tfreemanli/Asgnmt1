@@ -1,0 +1,7 @@
+Deployment:
+https://asgnmt1.vercel.app/
+Administrator
+password: 1
+
+Github account:
+https://github.com/tfreemanli/Asgnmt1

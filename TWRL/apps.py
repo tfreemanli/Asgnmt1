@@ -6,4 +6,4 @@ class TwrlConfig(AppConfig):
     name = 'TWRL'
 
     def ready(self):
-        import TWRL.signal
+        import TWRL.signals
