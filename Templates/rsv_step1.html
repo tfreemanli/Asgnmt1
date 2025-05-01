@@ -5,14 +5,65 @@
     <div class="container">
         <div class="row">
             <div>
-                <form method="GET" action="{% url 'booking_step1' %}">
+                <form method="GET" action="{% url 'booking_step1' %}" id="dateForm">
                     {% csrf_token %}
                     <div class="row col-sm-12 mt-4"><p>Pick your CheckIn and CheckOut date and time.</p></div>
                     <div>
-                        Check In :<input type="datetime-local" name="startDT" value="{{ startDT }}">
-                        Check Out:<input type="datetime-local" name="endDT" value="{{ endDT }}">
+                        Check In :<input type="datetime-local" name="startDT" value="{{ startDT }}" id="startDT">
+                        Check Out:<input type="datetime-local" name="endDT" value="{{ endDT }}" id="endDT">
                         <input class="btn btn-primary" type="submit" value="Check Available">
+                        <div id="errorMsg" style="color: red; display: none;"></div>
                     </div>
+                    <script language="javascript">
+                        document.getElementById('dateForm').addEventListener('submit', function(event) {
+                          // 阻止表单默认提交行为
+                          event.preventDefault();
+
+                          // 获取输入值
+                          const startDT = document.getElementById('startDT').value;
+                          const endDT = document.getElementById('endDT').value;
+                          const errorMsg = document.getElementById('errorMsg');
+
+                          //alert("here");
+
+                          // 重置错误消息
+                          errorMsg.style.display = 'none';
+                          errorMsg.textContent = '';
+
+                          // 基本验证 - 检查是否已填写
+                          if (!startDT || !endDT) {
+                            showError('Please fill in both dates.');
+                            return;
+                          }
+
+                          // 转换为Date对象进行比较
+                          const startDate = new Date(startDT);
+                          const endDate = new Date(endDT);
+                          const now = new Date();
+
+                          // 验证逻辑
+                          if (startDate >= endDate) {
+                            showError('Check-Out date must be after Check-In date.');
+                            return;
+                          }
+
+                          if (startDate < now) {
+                            showError('Check-In date cannot be in the past.');
+                            return;
+                          }
+
+                          // 如果所有验证通过，手动提交表单
+                          this.submit();
+                          showError('Search OK');
+
+                          function showError(message) {
+                            errorMsg.textContent = message;
+                            errorMsg.style.display = 'block';
+                            // 可选：滚动到错误消息位置
+                            errorMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                          }
+                        });
+                    </script>
                 </form>
                 <div>
                     <strong>{{ object_list.count }} rooms are available.</strong>
